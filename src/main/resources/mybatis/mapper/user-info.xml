@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sp.bdi.dao.UserInfoMapper">
+	<select id="selectUserInfoList" resultType="user">
+		select * from user_info 
+		<where>
+			<if test="uiNum != null">
+				ui_num = #{uiNum}
+			</if>
+		</where>
+		<where>
+			<if test="search != null">
+				<foreach collection="search" item="col" separator="or">
+					${col} like '%' || #{searchStr} || '%'
+				</foreach>
+			</if>
+		</where>
+		order by ui_num desc
+	</select>
+	
+	<select id="selectUserInfo" resultType="user">
+		select * from user_info 
+		<where>
+			<if test="uiId != null">
+				and ui_id = #{uiId}
+			</if>
+			<if test="uiPwd != null">
+				and ui_pwd = #{uiPwd}
+			</if>
+			<if test="uiNum != null">
+				and ui_num = #{uiNum}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="insertUserInfo" parameterType="user">
+		insert into
+		user_info(ui_num,ui_name,ui_id,ui_pwd,credat,cretim,modat,modtim)
+		values(seq_ui_num.nextval,#{uiName},#{uiId},#{uiPwd},
+		to_char(sysdate,'YYYYMMDD'),to_char(sysdate,'HH24MISS'),to_char(sysdate,'YYYYMMDD'),to_char(sysdate,'HH24MISS'))
+	</insert>
+	<update id="updateUserInfo" parameterType="user">
+		update user_info 
+		<set>
+			<if test="uiId != null">
+				, ui_id = #{uiId}
+			</if>
+			<if test="uiPwd != null">
+				, ui_pwd = #{uiPwd}
+			</if>
+			<if test="uiName != null">
+				, ui_name = #{uiName}
+			</if>
+		</set>
+		where ui_num = #{uiNum}
+	</update>
+	<delete id="deleteUserInfo" parameterType="user">
+		delete from user_info where ui_num = #{uiNum}
+	</delete>
+</mapper>
